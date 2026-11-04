@@ -23,10 +23,14 @@ services:
       DB_DATABASE: ${DB_DATABASE}
       DB_USERNAME: ${DB_USERNAME}
       DB_PASSWORD: ${DB_PASSWORD}
+    tmpfs: &laravel-tmpfs
+      - /var/www/html/bootstrap/cache
+      - /var/www/html/storage/framework
 
   app2:
     image: url-shortener-app
     environment: *app-environment
+    tmpfs: *laravel-tmpfs
 
   nginx:
     image: nginx:stable
@@ -129,6 +133,7 @@ services:
         condition: service_healthy
       db-primary:
         condition: service_healthy
+    tmpfs: *laravel-tmpfs
 
   scheduler:
     image: url-shortener-app
@@ -140,7 +145,7 @@ services:
         condition: service_healthy
       db-primary:
         condition: service_healthy
-
+    tmpfs: *laravel-tmpfs
   minio:
     build:
       context: ./docker/minio

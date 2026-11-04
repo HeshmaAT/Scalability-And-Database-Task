@@ -26,6 +26,13 @@ RUN composer install \
         --optimize-autoloader \
     && chown -R www-data:www-data storage bootstrap/cache
 
+COPY docker/app/entrypoint.sh /usr/local/bin/app-entrypoint
+COPY docker/php/opcache.ini /usr/local/etc/php/conf.d/zz-opcache.ini
+
+RUN sed -i 's/\r$//' /usr/local/bin/app-entrypoint \
+    && chmod +x /usr/local/bin/app-entrypoint
+
 EXPOSE 9000
 
+ENTRYPOINT ["app-entrypoint"]
 CMD ["php-fpm"]

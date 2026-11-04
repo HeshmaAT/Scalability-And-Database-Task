@@ -5,6 +5,5 @@
 !.env.example
 vendor
 node_modules
-docker
 storage/logs/*
 bootstrap/cache/*.php
