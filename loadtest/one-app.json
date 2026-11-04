@@ -1,0 +1,16 @@
+{
+  "scenario": "one-app",
+  "requests": 1000,
+  "concurrency": 20,
+  "success": 1000,
+  "errors": 0,
+  "duration_seconds": 1.9,
+  "successful_rps": 526.78,
+  "p50_ms": 34.27,
+  "p95_ms": 53.87,
+  "p99_ms": 65.23,
+  "hosts": {
+    "52e714a710a4": 1000
+  },
+  "error_examples": []
+}
