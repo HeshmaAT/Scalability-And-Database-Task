@@ -26,3 +26,46 @@ services:
     depends_on:
       - app1
       - app2
+
+  db-primary:
+    image: mariadb:10.11
+    environment:
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+    command:
+      - --server-id=1
+      - --log-bin=mariadb-bin
+      - --binlog-format=ROW
+      - --gtid-strict-mode=ON
+    volumes:
+      - primary-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  db-replica:
+    image: mariadb:10.11
+    environment:
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+    command:
+      - --server-id=2
+      - --log-bin=mariadb-bin
+      - --relay-log=mariadb-relay-bin
+      - --log-slave-updates=ON
+      - --binlog-format=ROW
+      - --gtid-strict-mode=ON
+      - --read-only=ON
+    volumes:
+      - replica-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+volumes:
+  primary-data:
+  replica-data:
