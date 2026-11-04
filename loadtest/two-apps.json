@@ -1,0 +1,17 @@
+{
+  "scenario": "two-apps",
+  "requests": 1000,
+  "concurrency": 20,
+  "success": 1000,
+  "errors": 0,
+  "duration_seconds": 1.43,
+  "successful_rps": 698.56,
+  "p50_ms": 25.35,
+  "p95_ms": 51.06,
+  "p99_ms": 59.09,
+  "hosts": {
+    "6b4187db1cc4": 501,
+    "52e714a710a4": 499
+  },
+  "error_examples": []
+}
