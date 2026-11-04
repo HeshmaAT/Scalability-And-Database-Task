@@ -9,8 +9,14 @@ services:
       APP_URL: http://localhost:8080
       LOG_CHANNEL: stderr
       SESSION_DRIVER: array
-      CACHE_STORE: array
-      QUEUE_CONNECTION: sync
+      CACHE_STORE: redis
+      QUEUE_CONNECTION: redis
+      REDIS_CLIENT: phpredis
+      REDIS_HOST: redis-cache
+      REDIS_PORT: "6379"
+      REDIS_QUEUE_HOST: redis-queue
+      REDIS_QUEUE_PORT: "6379"
+      REDIS_QUEUE_CONNECTION: queue
       DB_CONNECTION: ${DB_CONNECTION}
       DB_HOST: ${DB_HOST}
       DB_PORT: ${DB_PORT}
@@ -72,6 +78,84 @@ services:
       interval: 5s
       timeout: 5s
       retries: 20
+  redis-cache:
+    image: redis:7.4
+    command:
+      - redis-server
+      - --maxmemory
+      - 128mb
+      - --maxmemory-policy
+      - allkeys-lfu
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis-queue:
+    image: redis:7.4
+    command:
+      - redis-server
+      - --appendonly
+      - "yes"
+      - --maxmemory
+      - 128mb
+      - --maxmemory-policy
+      - noeviction
+    volumes:
+      - queue-data:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  worker:
+    image: url-shortener-app
+    environment: *app-environment
+    command:
+      - php
+      - artisan
+      - queue:work
+      - redis
+      - --sleep=1
+      - --tries=3
+      - --timeout=60
+    restart: unless-stopped
+    depends_on:
+      redis-queue:
+        condition: service_healthy
+      redis-cache:
+        condition: service_healthy
+      db-primary:
+        condition: service_healthy
+
+  scheduler:
+    image: url-shortener-app
+    environment: *app-environment
+    command: [ "php", "artisan", "schedule:work" ]
+    restart: unless-stopped
+    depends_on:
+      redis-cache:
+        condition: service_healthy
+      db-primary:
+        condition: service_healthy
+
+  minio:
+    build:
+      context: ./docker/minio
+    image: url-shortener-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    ports:
+      - "127.0.0.1:9002:9000"
+      - "127.0.0.1:9003:9001"
+    volumes:
+      - minio-data:/data
 volumes:
   primary-data:
   replica-data:
+  queue-data:
+  minio-data:

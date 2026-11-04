@@ -179,6 +179,13 @@ return [
             'backoff_cap' => env('REDIS_BACKOFF_CAP', 1000),
         ],
 
+        'queue' => [
+            'host' => env('REDIS_QUEUE_HOST', 'redis-queue'),
+            'password' => env('REDIS_QUEUE_PASSWORD'),
+            'port' => env('REDIS_QUEUE_PORT', 6379),
+            'database' => 0,
+        ],
+
     ],
 
 ];
