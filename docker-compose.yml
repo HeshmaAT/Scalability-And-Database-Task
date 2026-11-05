@@ -50,6 +50,8 @@ services:
       MARIADB_DATABASE: ${MARIADB_DATABASE}
       MARIADB_USER: ${MARIADB_USER}
       MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+      MARIADB_REPLICATION_USER: ${MARIADB_REPLICATION_USER}
+      MARIADB_REPLICATION_PASSWORD: ${MARIADB_REPLICATION_PASSWORD}
     command:
       - --server-id=1
       - --log-bin=mariadb-bin
@@ -67,6 +69,9 @@ services:
     image: mariadb:10.11
     environment:
       MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_MASTER_HOST: db-primary
+      MARIADB_REPLICATION_USER: ${MARIADB_REPLICATION_USER}
+      MARIADB_REPLICATION_PASSWORD: ${MARIADB_REPLICATION_PASSWORD}
     command:
       - --server-id=2
       - --log-bin=mariadb-bin
@@ -77,6 +82,7 @@ services:
       - --read-only=ON
     volumes:
       - replica-data:/var/lib/mysql
+      - ./docker/mariadb/replica-init.sql:/docker-entrypoint-initdb.d/10-replication.sql:ro
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 5s
@@ -95,6 +101,9 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+    depends_on:
+      db-primary:
+        condition: service_healthy
 
   redis-queue:
     image: redis:7.4
