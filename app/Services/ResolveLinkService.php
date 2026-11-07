@@ -2,28 +2,28 @@
 
 namespace App\Services;
 
-use App\Models\Link;
-use Illuminate\Support\Carbon;
 use Symfony\Component\HttpKernel\Exception\GoneHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ResolveLinkService
 {
+    public function __construct(private LinkCacheService $cache)
+    {
+    }
+
     public function resolve(string $shortCode): string
     {
-        $link = Link::query()
-            ->where('short_code', $shortCode)
-            ->first();
+        $link = $this->cache->get($shortCode);
 
-        if ($link === null || ! $link->is_active) {
+        if (($link['missing'] ?? false) || ! $link['is_active']) {
             throw new NotFoundHttpException('Link not found.');
         }
 
-        if ($link->expires_at !== null
-            && Carbon::parse($link->expires_at, 'UTC')->lte(now('UTC'))) {
+        if ($link['expires_at'] !== null
+            && $link['expires_at'] <= now('UTC')->getTimestamp()) {
             throw new GoneHttpException('Link has expired.');
         }
 
-        return $link->destination_url;
+        return $link['destination_url'];
     }
 }

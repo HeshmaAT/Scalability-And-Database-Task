@@ -98,6 +98,11 @@ return [
                 'array',
             ],
         ],
+        'link_locks' => [
+            'driver' => 'redis',
+            'connection' => 'queue',
+            'lock_connection' => 'queue',
+        ],
 
     ],
 
