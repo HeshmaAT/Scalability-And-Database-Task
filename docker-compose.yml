@@ -23,6 +23,7 @@ services:
       DB_DATABASE: ${DB_DATABASE}
       DB_USERNAME: ${DB_USERNAME}
       DB_PASSWORD: ${DB_PASSWORD}
+      LINK_CREATE_PER_MINUTE: ${LINK_CREATE_PER_MINUTE:-60}
     tmpfs: &laravel-tmpfs
       - /var/www/html/bootstrap/cache
       - /var/www/html/storage/framework

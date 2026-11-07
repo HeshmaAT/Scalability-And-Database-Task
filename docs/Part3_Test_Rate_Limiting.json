@@ -1,0 +1,333 @@
+{
+  "info": {
+    "_postman_id": "9585f5ba-3e6f-4dce-9bd7-8b09756bfacf",
+    "name": "Scalability-And-Database-Task",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "15237867"
+  },
+  "item": [
+    {
+      "name": "lOGIN",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"email\": \"Heshmat@monstersgate.test\",\r\n  \"password\": \"monstersgateNUM1\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/login",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "link creation",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "1|ys3p29KClRCQkw5y57RPAwH7BvwDEPizSHLdHV9l38d4b923",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"destination_url\": \"https://example.com/article\",\r\n  \"custom_alias\": \"limited_offer\",  // Nullable\r\n  \"expires_at\": \"2027-01-01T00:00:00+02:00\" // Nullable\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/links",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "links"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Status of link",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "1|ys3p29KClRCQkw5y57RPAwH7BvwDEPizSHLdHV9l38d4b923",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  //\"is_active\": true  // or active\r\n\r\n  \"expires_at\": \"2026-11-06T12:00:47Z\"\r\n\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/links/1000003",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "links",
+            "1000003"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Link Stats",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "1|ys3p29KClRCQkw5y57RPAwH7BvwDEPizSHLdHV9l38d4b923",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/links/1000001/stats",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "links",
+            "1000001",
+            "stats"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Request QR Code",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "1|ys3p29KClRCQkw5y57RPAwH7BvwDEPizSHLdHV9l38d4b923",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/links/1000001/qr",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "links",
+            "1000001",
+            "qr"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get QR Code Status",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "1|ys3p29KClRCQkw5y57RPAwH7BvwDEPizSHLdHV9l38d4b923",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  //\"is_active\": true  // or active\r\n\r\n  \"expires_at\": \"2026-11-06T12:00:47Z\"\r\n\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/links/1000001/qr",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "links",
+            "1000001",
+            "qr"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Testing",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const token = pm.environment.get(\"access_token\");\r\n\r\nif (!token) {\r\n    throw new Error(\"Run Login first to set access_token.\");\r\n}\r\n\r\nconst results = await Promise.allSettled(\r\n    Array.from({ length: 50 }, () => pm.sendRequest({\r\n        url: \"http://localhost:8080/api/links\",\r\n        method: \"POST\",\r\n        header: {\r\n            Authorization: `Bearer ${token}`,\r\n            Accept: \"application/json\",\r\n            \"Content-Type\": \"application/json\"\r\n        },\r\n        body: {\r\n            mode: \"raw\",\r\n            raw: JSON.stringify({\r\n                destination_url: \"https://example.com/concurrent-test\"\r\n            })\r\n        }\r\n    }))\r\n);\r\n\r\nconst created = results\r\n    .filter(result => result.status === \"fulfilled\" && result.value.code === 201)\r\n    .map(result => result.value.json().short_code);\r\n\r\npm.test(\"All 50 requests returned 201\", () => {\r\n    pm.expect(created).to.have.lengthOf(50);\r\n});\r\n\r\npm.test(\"All 50 codes are valid and distinct\", () => {\r\n    created.forEach(code => pm.expect(code).to.match(/^[A-Za-z0-9]{10}$/));\r\n    pm.expect(new Set(created).size).to.equal(50);\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{access_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/up",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "up"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create Link Rate Limit،",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const token = pm.environment.get(\"access_token\");\r\n\r\nif (!token) {\r\n    throw new Error(\"Run Login first.\");\r\n}\r\n\r\nconst responses = [];\r\n\r\nfor (let i = 0; i < 61; i++) {\r\n    const response = await pm.sendRequest({\r\n        url: \"http://localhost:8080/api/links\",\r\n        method: \"POST\",\r\n        header: {\r\n            Authorization: `Bearer ${token}`,\r\n            Accept: \"application/json\",\r\n            \"Content-Type\": \"application/json\"\r\n        },\r\n        body: {\r\n            mode: \"raw\",\r\n            raw: JSON.stringify({\r\n                destination_url: \"https://example.com/rate-limit-test\"\r\n            })\r\n        }\r\n    });\r\n\r\n    responses.push(response);\r\n}\r\n\r\npm.test(\"First 60 requests returned 201\", () => {\r\n    pm.expect(responses.slice(0, 60).every(r => r.code === 201)).to.be.true;\r\n});\r\n\r\npm.test(\"Request 61 returned 429 with Retry-After\", () => {\r\n    const blocked = responses[60];\r\n\r\n    pm.expect(blocked.code).to.equal(429);\r\n\r\n    const retryAfter = blocked.headers.get(\"Retry-After\");\r\n\r\n    pm.expect(retryAfter).to.match(/^\\d+$/);\r\n    pm.expect(Number(retryAfter)).to.be.above(0);\r\n});\r\n\r\nconsole.log(\"Status codes:\", responses.map(r => r.code));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{access_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/up",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "up"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

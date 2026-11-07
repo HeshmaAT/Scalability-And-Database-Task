@@ -11,7 +11,7 @@ Route::post('/login', [AuthController::class, 'login'])
 
 
 Route::post('/links', [LinkController::class, 'store'])
-    ->middleware('auth:sanctum');
+    ->middleware(['auth:sanctum', 'throttle:create-links']);
 Route::patch('/links/{id}', [LinkController::class, 'update'])
     ->whereNumber('id')
     ->middleware('auth:sanctum');
