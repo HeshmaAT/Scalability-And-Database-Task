@@ -15,6 +15,7 @@ class UpdateLinkService
     public function update(User $owner, string $id, array $changes): Link
     {
         $code = Link::query()
+            ->useWritePdo()
             ->where('user_id', $owner->getKey())
             ->whereKey($id)
             ->firstOrFail(['short_code'])
@@ -22,6 +23,7 @@ class UpdateLinkService
 
         return $this->cache->synchronized($code, function () use ($owner, $id, $changes): Link {
             $link = Link::query()
+                ->useWritePdo()
                 ->where('user_id', $owner->getKey())
                 ->whereKey($id)
                 ->firstOrFail();

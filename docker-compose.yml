@@ -24,6 +24,8 @@ services:
       DB_USERNAME: ${DB_USERNAME}
       DB_PASSWORD: ${DB_PASSWORD}
       LINK_CREATE_PER_MINUTE: ${LINK_CREATE_PER_MINUTE:-60}
+      DB_READ_HOST: ${DB_READ_HOST:-db-replica}
+      DB_WRITE_HOST: ${DB_WRITE_HOST:-db-primary}
     tmpfs: &laravel-tmpfs
       - /var/www/html/bootstrap/cache
       - /var/www/html/storage/framework
