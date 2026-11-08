@@ -7,11 +7,11 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ResolveLinkService
 {
-    public function __construct(private LinkCacheService $cache)
+    public function __construct(private LinkCacheService $cache, private ClickBufferService $buffer,)
     {
     }
 
-    public function resolve(string $shortCode): string
+    public function resolve(string $shortCode, string $visitorIp): string
     {
         $link = $this->cache->get($shortCode);
 
@@ -23,6 +23,8 @@ class ResolveLinkService
             && $link['expires_at'] <= now('UTC')->getTimestamp()) {
             throw new GoneHttpException('Link has expired.');
         }
+
+        $this->buffer->record($link['id'], $visitorIp);
 
         return $link['destination_url'];
     }
