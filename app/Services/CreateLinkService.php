@@ -13,10 +13,8 @@ class CreateLinkService
 {
     private const MAX_ATTEMPTS = 5;
 
-    public function __construct(
-        private ShortCodeGenerator $generator,
-        private LinkCacheService $cache,
-    ) {
+    public function __construct(private ShortCodeGenerator $generator, private LinkCacheService $cache,)
+    {
     }
 
     public function create(
