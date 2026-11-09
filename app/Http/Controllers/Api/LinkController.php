@@ -11,6 +11,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Carbon;
 use App\Services\LinkDetailsService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 
 class LinkController extends Controller
 {
@@ -73,6 +74,9 @@ class LinkController extends Controller
             'link_id' => $qr->link_id,
             'status' => $qr->status,
             'generated_at' => $qr->generated_at,
+            'url' => $qr->status === 'ready'
+                ? URL::temporarySignedRoute('qr.image', now()->addMinutes(5), ['linkId' => $qr->link_id],)
+                : null,
         ], $qr->status === 'pending' ? 202 : 200);
     }
 }

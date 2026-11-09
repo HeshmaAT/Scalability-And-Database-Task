@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\QrImageController;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -15,6 +16,10 @@ return Application::configure(basePath: dirname(__DIR__))
         then: function (): void {
             Route::get('/{shortCode}', RedirectLinkController::class)
                 ->where('shortCode', '[A-Za-z0-9_-]{3,32}');
+            Route::get('/qr/{linkId}', QrImageController::class)
+                ->whereNumber('linkId')
+                ->middleware('signed')
+                ->name('qr.image');
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {

@@ -26,6 +26,12 @@ services:
       LINK_CREATE_PER_MINUTE: ${LINK_CREATE_PER_MINUTE:-60}
       DB_READ_HOST: ${DB_READ_HOST:-db-replica}
       DB_WRITE_HOST: ${DB_WRITE_HOST:-db-primary}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
+      AWS_BUCKET: ${AWS_BUCKET}
+      AWS_ENDPOINT: ${AWS_ENDPOINT}
+      AWS_USE_PATH_STYLE_ENDPOINT: "true"
     tmpfs: &laravel-tmpfs
       - /var/www/html/bootstrap/cache
       - /var/www/html/storage/framework

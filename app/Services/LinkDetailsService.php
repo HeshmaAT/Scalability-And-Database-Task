@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Jobs\GenerateQrCode;
 use App\Models\Link;
 use App\Models\User;
 use Illuminate\Database\UniqueConstraintViolationException;
@@ -38,36 +39,50 @@ class LinkDetailsService
     }
     public function requestQr(User $owner, string $id): object
     {
-        $link = $this->ownedLink($owner, $id);
-        $records = DB::table('link_qr_codes');
+        $link = $this->ownedLink($owner, $id, true);
 
         try {
-            $records->insert([
+            DB::table('link_qr_codes')->insert([
                 'link_id' => $link->id,
                 'status' => 'pending',
             ]);
         } catch (UniqueConstraintViolationException) {
+            // Reuse the existing QR record.
         }
 
-        return $this->qrRecord($link);
+        $record = $this->qrRecord($link);
+
+        if ($record->status === 'pending') {
+            GenerateQrCode::dispatch($link->id);
+        }
+
+        return $record;
     }
 
     public function qr(User $owner, string $id): object
     {
-        return $this->qrRecord($this->ownedLink($owner, $id));
+        return $this->qrRecord($this->ownedLink($owner, $id, true));
     }
 
-    private function ownedLink(User $owner, string $id): Link
+    private function ownedLink(User $owner, string $id, bool $primaryOnly = false): Link
     {
-        return Link::query()
+        $query = Link::query()
             ->where('user_id', $owner->getKey())
-            ->whereKey($id)
-            ->firstOrFail();
+            ->whereKey($id);
+
+        if ($primaryOnly) {
+            $query->useWritePdo();
+        }
+
+        return $query->firstOrFail();
     }
 
     private function qrRecord(Link $link): object
     {
-        return DB::table('link_qr_codes')->where('link_id', $link->id)->first()
+        return DB::table('link_qr_codes')
+            ->useWritePdo()
+            ->where('link_id', $link->id)
+            ->first()
             ?? throw new NotFoundHttpException('QR has not been requested.');
     }
 }
