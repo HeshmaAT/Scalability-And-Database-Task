@@ -1,0 +1,22 @@
+services:
+  app1:
+    environment: &failover-environment
+      APP_URL: http://localhost:8082
+      DB_READ_HOST: db-replica
+      DB_WRITE_HOST: ${FAILOVER_WRITE_HOST:-db-primary}
+
+  app2:
+    environment: *failover-environment
+
+  worker:
+    environment: *failover-environment
+
+  scheduler:
+    environment: *failover-environment
+
+  nginx:
+    ports: !override
+      - "127.0.0.1:8082:80"
+
+  minio:
+    ports: !reset []

@@ -21,5 +21,24 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->render(function (\PDOException $exception) {
+            $driverCode = (int) ($exception->errorInfo[1] ?? 0);
+            $sqlState = (string) ($exception->errorInfo[0] ?? $exception->getCode());
+
+            $connectionFailed = in_array($driverCode, [2002, 2003, 2006, 2013], true)
+                || str_starts_with($sqlState, '08');
+
+            if (! $connectionFailed) {
+                return null;
+            }
+
+            return response()->json(
+                ['message' => 'Database temporarily unavailable. Try again shortly.'],
+                503,
+                [
+                    'Retry-After' => '5',
+                    'Cache-Control' => 'no-store',
+                ],
+            );
+        });
     })->create();
