@@ -18,12 +18,19 @@ RUN apt-get update \
 
 COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
 
-COPY . .
+COPY composer.json composer.lock ./
 
-RUN composer install \
+RUN --mount=type=cache,target=/tmp/composer-cache \
+    COMPOSER_CACHE_DIR=/tmp/composer-cache \
+    composer install \
         --no-interaction \
         --prefer-dist \
-        --optimize-autoloader \
+        --no-scripts \
+        --no-autoloader
+
+COPY . .
+
+RUN composer dump-autoload --optimize --no-interaction \
     && chown -R www-data:www-data storage bootstrap/cache
 
 COPY docker/app/entrypoint.sh /usr/local/bin/app-entrypoint

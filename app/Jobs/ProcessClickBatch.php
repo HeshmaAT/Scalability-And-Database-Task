@@ -7,6 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\DB;
+use RuntimeException;
 
 class ProcessClickBatch implements ShouldQueue
 {
@@ -50,6 +51,18 @@ class ProcessClickBatch implements ShouldQueue
                 DB::table('link_clicks')->insert($rows);
 
                 ksort($counts);
+
+                $existingIds = DB::table('links')
+                    ->whereIn('id', array_keys($counts))
+                    ->orderBy('id')
+                    ->lockForUpdate()
+                    ->pluck('id');
+
+                if ($existingIds->count() !== count($counts)) {
+                    throw new RuntimeException('Click batch references a missing link.');
+                }
+
+                DB::table('link_clicks')->insert($rows);
 
                 foreach ($counts as $linkId => $count) {
                     DB::table('links')

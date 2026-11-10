@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Console\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\StoreLinkRequest;
-use App\Http\Requests\Api\UpdateLinkRequest;
+use App\Console\Http\Controllers\Controller;
+use App\Console\Http\Requests\Api\StoreLinkRequest;
+use App\Console\Http\Requests\Api\UpdateLinkRequest;
 use App\Services\CreateLinkService;
+use App\Services\LinkDetailsService;
 use App\Services\UpdateLinkService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Carbon;
-use App\Services\LinkDetailsService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\URL;
 
 class LinkController extends Controller

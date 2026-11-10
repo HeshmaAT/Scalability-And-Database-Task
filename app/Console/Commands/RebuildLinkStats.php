@@ -35,8 +35,7 @@ class RebuildLinkStats extends Command
                     $locked = DB::table('links')
                         ->where('id', $link->id)
                         ->lockForUpdate()
-                        ->first(['id']);
-
+                        ->first(['id', 'archived_click_count']);
                     if ($locked === null) {
                         return;
                     }
@@ -48,8 +47,11 @@ class RebuildLinkStats extends Command
 
                     DB::table('links')
                         ->where('id', $link->id)
-                        ->update(['click_count' => $count]);
-                }, 5);
+                        ->update([
+                            'click_count' => $locked->archived_click_count + $count,
+                        ]);
+                    },
+                    5);
 
                 $rebuilt++;
             }

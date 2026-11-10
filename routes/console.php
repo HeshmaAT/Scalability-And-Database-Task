@@ -9,3 +9,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('analytics:flush')->everyMinute();
+Schedule::command('analytics:partitions:ensure')->dailyAt('00:10')->withoutOverlapping();
