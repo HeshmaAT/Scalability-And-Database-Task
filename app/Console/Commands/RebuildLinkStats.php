@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Services\ClickMaintenanceService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
@@ -9,9 +10,9 @@ class RebuildLinkStats extends Command
 {
     protected $signature = 'stats:rebuild {--link= : Rebuild one link only}';
 
-    protected $description = 'Rebuild click counters from stored click events';
+    protected $description = 'Rebuild lifetime click counters';
 
-    public function handle(): int
+    public function handle(ClickMaintenanceService $maintenance): int
     {
         $linkId = $this->option('link');
 
@@ -21,41 +22,52 @@ class RebuildLinkStats extends Command
             return self::FAILURE;
         }
 
-        $query = DB::table('links')->select('id');
-
-        if ($linkId !== null) {
-            $query->where('id', $linkId);
-        }
-
         $rebuilt = 0;
 
-        $query->chunkById(500, function ($links) use (&$rebuilt): void {
-            foreach ($links as $link) {
-                DB::transaction(function () use ($link): void {
-                    $locked = DB::table('links')
-                        ->where('id', $link->id)
-                        ->lockForUpdate()
-                        ->first(['id', 'archived_click_count']);
-                    if ($locked === null) {
-                        return;
-                    }
+        $executed = $maintenance->run(function () use ($linkId, &$rebuilt): void {
+            $query = DB::table('links')
+                ->useWritePdo()
+                ->select('id');
 
-                    $count = DB::table('link_clicks')
-                        ->useWritePdo()
-                        ->where('link_id', $link->id)
-                        ->count();
-
-                    DB::table('links')
-                        ->where('id', $link->id)
-                        ->update([
-                            'click_count' => $locked->archived_click_count + $count,
-                        ]);
-                    },
-                    5);
-
-                $rebuilt++;
+            if ($linkId !== null) {
+                $query->where('id', $linkId);
             }
+
+            $query->chunkById(500, function ($links) use (&$rebuilt): void {
+                foreach ($links as $link) {
+                    DB::transaction(function () use ($link): void {
+                        $locked = DB::table('links')
+                            ->where('id', $link->id)
+                            ->lockForUpdate()
+                            ->first(['id', 'archived_click_count']);
+
+                        if ($locked === null) {
+                            return;
+                        }
+
+                        $rawClicks = DB::table('link_clicks')
+                            ->useWritePdo()
+                            ->where('link_id', $link->id)
+                            ->count();
+
+                        DB::table('links')
+                            ->where('id', $link->id)
+                            ->update([
+                                'click_count' =>
+                                    $locked->archived_click_count + $rawClicks,
+                            ]);
+                    }, 5);
+
+                    $rebuilt++;
+                }
+            });
         });
+
+        if (! $executed) {
+            $this->warn('Maintenance is busy or an archive needs recovery.');
+
+            return self::FAILURE;
+        }
 
         $this->info("Rebuilt counters for {$rebuilt} links.");
 

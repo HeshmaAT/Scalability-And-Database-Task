@@ -9,6 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 use Mockery;
 use Tests\TestCase;
+use App\Services\ClickMaintenanceService;
 
 class ClickBatchTest extends TestCase
 {
@@ -43,8 +44,10 @@ class ClickBatchTest extends TestCase
             ->with($batchId)
             ->twice();
 
-        (new ProcessClickBatch($batchId))->handle($buffer);
-        (new ProcessClickBatch($batchId))->handle($buffer);
+        $maintenance = app(ClickMaintenanceService::class);
+
+        (new ProcessClickBatch($batchId))->handle($buffer, $maintenance);
+        (new ProcessClickBatch($batchId))->handle($buffer, $maintenance);
 
         $this->assertDatabaseCount('link_clicks', 2);
         $this->assertDatabaseCount('processed_click_batches', 1);

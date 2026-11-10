@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Services\ClickBufferService;
+use App\Services\ClickMaintenanceService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Foundation\Queue\Queueable;
@@ -13,20 +14,41 @@ class ProcessClickBatch implements ShouldQueue
 {
     use Queueable;
 
-    public int $tries = 5;
+    // Waiting for maintenance should not exhaust job attempts.
+    public int $tries = 0;
+
+    // Actual unhandled failures still have a limit.
+    public int $maxExceptions = 5;
 
     public function __construct(public string $batchId)
     {
     }
 
-    public function handle(ClickBufferService $buffer): void
-    {
+    public function handle(
+        ClickBufferService $buffer,
+        ClickMaintenanceService $maintenance,
+    ): void {
         $events = $buffer->events($this->batchId);
 
         if ($events === []) {
             return;
         }
 
+        $processed = $maintenance->run(function () use ($events): void {
+            $this->persist($events);
+        });
+
+        if (! $processed) {
+            $this->release(10);
+
+            return;
+        }
+
+        $buffer->acknowledge($this->batchId);
+    }
+
+    private function persist(array $events): void
+    {
         try {
             DB::transaction(function () use ($events): void {
                 DB::table('processed_click_batches')->insert([
@@ -34,21 +56,36 @@ class ProcessClickBatch implements ShouldQueue
                     'processed_at' => now('UTC'),
                 ]);
 
+                $archiveBoundary = DB::table('click_archive_runs')
+                    ->useWritePdo()
+                    ->where('status', 'completed')
+                    ->max('upper_bound');
+
                 $rows = [];
                 $counts = [];
+                $archivedCounts = [];
 
                 foreach ($events as $event) {
+                    $linkId = $event['link_id'];
+
+                    $counts[$linkId] = ($counts[$linkId] ?? 0) + 1;
+
+                    if (
+                        $archiveBoundary !== null
+                        && $event['clicked_at'] < $archiveBoundary
+                    ) {
+                        $archivedCounts[$linkId] =
+                            ($archivedCounts[$linkId] ?? 0) + 1;
+
+                        continue;
+                    }
+
                     $rows[] = [
-                        'link_id' => $event['link_id'],
+                        'link_id' => $linkId,
                         'clicked_at' => $event['clicked_at'],
                         'visitor_hash' => hex2bin($event['visitor_hash']),
                     ];
-
-                    $id = $event['link_id'];
-                    $counts[$id] = ($counts[$id] ?? 0) + 1;
                 }
-
-                DB::table('link_clicks')->insert($rows);
 
                 ksort($counts);
 
@@ -59,15 +96,23 @@ class ProcessClickBatch implements ShouldQueue
                     ->pluck('id');
 
                 if ($existingIds->count() !== count($counts)) {
-                    throw new RuntimeException('Click batch references a missing link.');
+                    throw new RuntimeException(
+                        'Click batch references a missing link.'
+                    );
                 }
 
-                DB::table('link_clicks')->insert($rows);
+                if ($rows !== []) {
+                    DB::table('link_clicks')->insert($rows);
+                }
 
                 foreach ($counts as $linkId => $count) {
                     DB::table('links')
                         ->where('id', $linkId)
-                        ->increment('click_count', $count);
+                        ->incrementEach([
+                            'click_count' => $count,
+                            'archived_click_count' =>
+                                $archivedCounts[$linkId] ?? 0,
+                        ]);
                 }
             }, 5);
         } catch (UniqueConstraintViolationException $exception) {
@@ -80,7 +125,5 @@ class ProcessClickBatch implements ShouldQueue
                 throw $exception;
             }
         }
-
-        $buffer->acknowledge($this->batchId);
     }
 }

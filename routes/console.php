@@ -10,3 +10,4 @@ Artisan::command('inspire', function () {
 
 Schedule::command('analytics:flush')->everyMinute();
 Schedule::command('analytics:partitions:ensure')->dailyAt('00:10')->withoutOverlapping();
+Schedule::command('analytics:partitions:archive --execute')->dailyAt('00:30')->withoutOverlapping();
