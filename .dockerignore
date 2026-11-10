@@ -6,4 +6,5 @@
 vendor
 node_modules
 storage/logs/*
+/work/
 bootstrap/cache/*.php
