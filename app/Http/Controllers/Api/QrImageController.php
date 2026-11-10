@@ -1,13 +1,11 @@
 <?php
 
-namespace App\Console\Http\Controllers\Api;
+namespace App\Http\Controllers\Api;
 
-use App\Console\Http\Controllers\Controller;
+use App\Http\Controllers\Controller;
 use App\Models\Link;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
-
 use Illuminate\Support\Facades\Storage;
 
 class QrImageController extends Controller

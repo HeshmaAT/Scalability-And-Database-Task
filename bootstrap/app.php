@@ -1,10 +1,10 @@
 <?php
 
 use App\Http\Controllers\Api\QrImageController;
+use App\Http\Controllers\RedirectLinkController;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use App\Http\Controllers\RedirectLinkController;
 use Illuminate\Support\Facades\Route;
 
 return Application::configure(basePath: dirname(__DIR__))

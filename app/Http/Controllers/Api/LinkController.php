@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Console\Http\Controllers\Api;
+namespace App\Http\Controllers\Api;
 
-use App\Console\Http\Controllers\Controller;
-use App\Console\Http\Requests\Api\StoreLinkRequest;
-use App\Console\Http\Requests\Api\UpdateLinkRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\StoreLinkRequest;
+use App\Http\Requests\Api\UpdateLinkRequest;
 use App\Services\CreateLinkService;
 use App\Services\LinkDetailsService;
 use App\Services\UpdateLinkService;
