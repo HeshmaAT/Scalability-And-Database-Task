@@ -1,0 +1,13 @@
+﻿{
+    "policy": "allkeys-lfu",
+    "maxmemory_bytes": 16777216,
+    "keys_written": 10010,
+    "value_bytes": 8192,
+    "evicted_keys": 8489,
+    "remaining_keys": 1521,
+    "hot_keys_remaining": 0,
+    "hot_keys_total": 10,
+    "used_memory_bytes": 16775768,
+    "used_memory_rss_bytes": 40615936,
+    "note": "Disposable Redis only. LFU retention is probabilistic; hot-key survival is observed, not guaranteed. maxmemory is not a process RSS limit."
+}

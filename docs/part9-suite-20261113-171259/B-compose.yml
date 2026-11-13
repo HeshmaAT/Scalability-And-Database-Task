@@ -1,0 +1,45 @@
+services:
+  app1:
+    cpus: '1.0'
+    mem_limit: 512m
+    environment: &benchmark-env
+      PART9_PROFILE: 'B'
+      LINK_CREATE_PER_MINUTE: '10000'
+      DB_READ_HOST: 'db-primary'
+      DB_WRITE_HOST: 'db-primary'
+      QUEUE_CONNECTION: 'redis'
+      CACHE_STORE: 'redis'
+    volumes:
+      - ./docker/php/part9-suite-fpm.conf:/usr/local/etc/php-fpm.d/zz-part9-suite.conf:ro
+  app2:
+    cpus: '1.0'
+    mem_limit: 512m
+    environment: *benchmark-env
+    volumes:
+      - ./docker/php/part9-suite-fpm.conf:/usr/local/etc/php-fpm.d/zz-part9-suite.conf:ro
+  worker:
+    cpus: '1.0'
+    mem_limit: 512m
+    environment: *benchmark-env
+    command: ['php', 'artisan', 'queue:work', 'redis', '--sleep=1', '--tries=3', '--timeout=60']
+  scheduler:
+    cpus: '0.25'
+    mem_limit: 256m
+    environment: *benchmark-env
+  nginx:
+    cpus: '0.5'
+    mem_limit: 128m
+    volumes:
+      - ./work/part9-suite-nginx.conf:/etc/nginx/conf.d/default.conf:ro
+  db-primary:
+    cpus: '2.0'
+    mem_limit: 2g
+  db-replica:
+    cpus: '1.0'
+    mem_limit: 1g
+  redis-cache:
+    cpus: '0.5'
+    mem_limit: 256m
+  redis-queue:
+    cpus: '0.5'
+    mem_limit: 256m

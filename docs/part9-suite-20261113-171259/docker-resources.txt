@@ -1,0 +1,1 @@
+CPUs=12 MemoryBytes=8219574272

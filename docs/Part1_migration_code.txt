@@ -1,0 +1,36 @@
+erDiagram
+    users ||--o{ links : owns
+    links ||--o{ link_clicks : receives
+    links ||--o| link_qr_codes : has
+
+    users {
+        bigint id PK
+        string name
+        string email
+    }
+
+    links {
+        bigint id PK
+        bigint user_id FK
+        varchar destination_url
+        varchar short_code UK
+        boolean is_active
+        timestamp expires_at
+        timestamp created_at
+        timestamp updated_at
+        timestamp deleted_at
+    }
+
+    link_clicks {
+        bigint id PK
+        bigint link_id FK
+        timestamp clicked_at
+        binary visitor_hash
+    }
+
+    link_qr_codes {
+        bigint link_id PK, FK
+        string status
+        string object_key
+        timestamp generated_at
+    }

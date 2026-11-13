@@ -1,0 +1,8 @@
+﻿"Container","Samples","AverageCPU","MaxSampledCPU"
+"scalability-and-database-task-nginx-1","28","7.26","10.26"
+"scalability-and-database-task-app1-1","28","76.19","99.26"
+"scalability-and-database-task-worker-1","28","0.24","4.98"
+"scalability-and-database-task-scheduler-1","28","0.06","0.12"
+"scalability-and-database-task-redis-queue-1","28","5.09","7.27"
+"scalability-and-database-task-redis-cache-1","28","5.17","8.26"
+"scalability-and-database-task-db-primary-1","28","1.46","5.67"

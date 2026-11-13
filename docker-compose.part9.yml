@@ -1,0 +1,12 @@
+services:
+  app1:
+    environment:
+      LINK_CREATE_PER_MINUTE: "10000"
+    volumes:
+      - ./docker/php/zz-part9-fpm.conf:/usr/local/etc/php-fpm.d/zz-part9-fpm.conf:ro
+
+  app2:
+    environment:
+      LINK_CREATE_PER_MINUTE: "10000"
+    volumes:
+      - ./docker/php/zz-part9-fpm.conf:/usr/local/etc/php-fpm.d/zz-part9-fpm.conf:ro

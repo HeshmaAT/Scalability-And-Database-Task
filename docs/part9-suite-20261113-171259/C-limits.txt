@@ -1,0 +1,8 @@
+/scalability-and-database-task-app1-1 CPU=1000000000 Memory=536870912
+/scalability-and-database-task-db-primary-1 CPU=2000000000 Memory=2147483648
+/scalability-and-database-task-db-replica-1 CPU=1000000000 Memory=1073741824
+/scalability-and-database-task-nginx-1 CPU=500000000 Memory=134217728
+/scalability-and-database-task-redis-cache-1 CPU=500000000 Memory=268435456
+/scalability-and-database-task-redis-queue-1 CPU=500000000 Memory=268435456
+/scalability-and-database-task-scheduler-1 CPU=250000000 Memory=268435456
+/scalability-and-database-task-worker-1 CPU=1000000000 Memory=536870912

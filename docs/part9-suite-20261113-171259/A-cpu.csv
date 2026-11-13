@@ -1,0 +1,6 @@
+﻿"Container","Samples","AverageCPU","MaxSampledCPU"
+"scalability-and-database-task-nginx-1","29","6.37","7.37"
+"scalability-and-database-task-scheduler-1","29","0.89","21.91"
+"scalability-and-database-task-app1-1","29","86.66","99.38"
+"scalability-and-database-task-worker-1","29","0.78","13.19"
+"scalability-and-database-task-db-primary-1","29","22.09","49.58"

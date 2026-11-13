@@ -11,6 +11,18 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        if (config('part9.profile') === 'A' && app()->environment('local', 'testing')) {
+            $this->app->bind(
+                \App\Services\LinkCacheService::class,
+                \App\Services\Part9\UncachedLinkCacheService::class,
+            );
+            $this->app->bind(
+                \App\Services\ClickBufferService::class,
+                \App\Services\Part9\DatabaseClickBufferService::class,
+            );
+            config(['cache.limiter' => 'database']);
+            config(['cache.stores.link_locks' => config('cache.stores.database')]);
+        }
     }
 
     public function boot(): void

@@ -1,0 +1,137 @@
+﻿{
+    "without_lock": {
+        "workers": 10,
+        "database_link_selects": 10,
+        "start_spread_ms": 4.11,
+        "samples": [
+            {
+                "queries": 1,
+                "elapsed_ms": 135.78,
+                "started_at": 1794584505.993326,
+                "success": true
+            },
+            {
+                "queries": 1,
+                "elapsed_ms": 132.69,
+                "started_at": 1794584505.99332,
+                "success": true
+            },
+            {
+                "queries": 1,
+                "elapsed_ms": 130.01,
+                "started_at": 1794584505.989543,
+                "success": true
+            },
+            {
+                "queries": 1,
+                "elapsed_ms": 136.52,
+                "started_at": 1794584505.989537,
+                "success": true
+            },
+            {
+                "queries": 1,
+                "elapsed_ms": 139.05,
+                "started_at": 1794584505.990481,
+                "success": true
+            },
+            {
+                "queries": 1,
+                "elapsed_ms": 133.05,
+                "started_at": 1794584505.989218,
+                "success": true
+            },
+            {
+                "queries": 1,
+                "elapsed_ms": 136.78,
+                "started_at": 1794584505.989363,
+                "success": true
+            },
+            {
+                "queries": 1,
+                "elapsed_ms": 130.55,
+                "started_at": 1794584505.989215,
+                "success": true
+            },
+            {
+                "queries": 1,
+                "elapsed_ms": 130.18,
+                "started_at": 1794584505.989217,
+                "success": true
+            },
+            {
+                "queries": 1,
+                "elapsed_ms": 134.11,
+                "started_at": 1794584505.993319,
+                "success": true
+            }
+        ]
+    },
+    "with_lock": {
+        "workers": 10,
+        "database_link_selects": 1,
+        "start_spread_ms": 0.15,
+        "samples": [
+            {
+                "queries": 0,
+                "elapsed_ms": 1286.38,
+                "started_at": 1794584514.15892,
+                "success": true
+            },
+            {
+                "queries": 0,
+                "elapsed_ms": 533.43,
+                "started_at": 1794584514.159069,
+                "success": true
+            },
+            {
+                "queries": 0,
+                "elapsed_ms": 2290.7,
+                "started_at": 1794584514.15892,
+                "success": true
+            },
+            {
+                "queries": 0,
+                "elapsed_ms": 283.91,
+                "started_at": 1794584514.159069,
+                "success": true
+            },
+            {
+                "queries": 0,
+                "elapsed_ms": 1787.75,
+                "started_at": 1794584514.159071,
+                "success": true
+            },
+            {
+                "queries": 0,
+                "elapsed_ms": 2040.66,
+                "started_at": 1794584514.159072,
+                "success": true
+            },
+            {
+                "queries": 0,
+                "elapsed_ms": 1035.6,
+                "started_at": 1794584514.159042,
+                "success": true
+            },
+            {
+                "queries": 0,
+                "elapsed_ms": 784.92,
+                "started_at": 1794584514.159073,
+                "success": true
+            },
+            {
+                "queries": 0,
+                "elapsed_ms": 1536.88,
+                "started_at": 1794584514.159043,
+                "success": true
+            },
+            {
+                "queries": 1,
+                "elapsed_ms": 147.31,
+                "started_at": 1794584514.159032,
+                "success": true
+            }
+        ]
+    },
+    "method": "Concurrent CLI processes, cold key in both rounds, same injected 100ms delay after each links SELECT; query fanout diagnostic, not an HTTP capacity test."
+}

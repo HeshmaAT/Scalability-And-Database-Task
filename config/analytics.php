@@ -2,5 +2,5 @@
 
 return [
     'batch_size' => 500,
-    'max_batches_per_run' => 20,
+    'max_batches_per_run' => 100,
 ];
