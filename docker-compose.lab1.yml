@@ -1,0 +1,39 @@
+services:
+  nginx:
+    networks:
+      default: {}
+      lab1-dns:
+        ipv4_address: 172.30.53.10
+
+  dns-auth:
+    image: coredns/coredns:1.12.0
+    command: ["-conf", "/etc/coredns/Corefile"]
+    volumes:
+      - ./docker/dns-lab/auth:/etc/coredns:ro
+    networks:
+      lab1-dns:
+        ipv4_address: 172.30.53.2
+
+  dns-resolver:
+    image: coredns/coredns:1.12.0
+    command: ["-conf", "/etc/coredns/Corefile"]
+    volumes:
+      - ./docker/dns-lab/resolver:/etc/coredns:ro
+    depends_on:
+      - dns-auth
+    networks:
+      lab1-dns:
+        ipv4_address: 172.30.53.3
+
+  dns-client:
+    build: ./docker/dns-lab/client
+    command: ["sleep", "infinity"]
+    networks:
+      lab1-dns:
+        ipv4_address: 172.30.53.20
+
+networks:
+  lab1-dns:
+    ipam:
+      config:
+        - subnet: 172.30.53.0/24

@@ -1,0 +1,7 @@
+brand.test:53 {
+    errors
+    log
+    file /etc/coredns/brand.test.zone brand.test {
+        reload 1s
+    }
+}

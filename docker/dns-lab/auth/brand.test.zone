@@ -1,0 +1,12 @@
+$ORIGIN brand.test.
+$TTL 60
+@ IN SOA ns.brand.test. hostmaster.brand.test. (
+    2026111620 ; serial: increment whenever the zone changes
+    60         ; refresh
+    30         ; retry
+    86400      ; expire
+    30         ; negative caching TTL
+)
+@  IN NS ns.brand.test.
+ns IN A 172.30.53.2
+go 60 IN A 172.30.53.10

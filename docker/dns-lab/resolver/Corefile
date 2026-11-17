@@ -1,0 +1,11 @@
+brand.test:53 {
+    errors
+    log
+    cache {
+        success 9984 3600 0
+        denial 9984 3600 0
+    }
+    forward . 172.30.53.2 {
+        health_check 5s domain brand.test.
+    }
+}
