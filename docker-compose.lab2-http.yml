@@ -1,0 +1,7 @@
+services:
+  nginx:
+    volumes:
+      - ./docker/lab2/assets:/srv/lab2-assets:ro
+  lab2-client:
+    volumes:
+      - ./docker/lab2/client/http-benchmark.mjs:/lab2/http-benchmark.mjs:ro
