@@ -1,0 +1,11 @@
+services:
+  lab2-client:
+    build: ./docker/lab2/client
+    cap_add:
+      - NET_ADMIN
+    command: ["sleep", "infinity"]
+    volumes:
+      - ./work/lab2-tls/rootCA.pem:/lab2/rootCA.pem:ro
+    networks:
+      lab1-dns:
+        ipv4_address: 172.30.53.30
