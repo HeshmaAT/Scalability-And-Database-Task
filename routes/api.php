@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\LinkController;
+use App\Http\Controllers\Lab\Lab3ClientInfoController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [AuthController::class, 'login'])
@@ -23,3 +24,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/links/{id}/qr', [LinkController::class, 'requestQr'])->whereNumber('id');
     Route::get('/links/{id}/qr', [LinkController::class, 'showQr'])->whereNumber('id');
 });
+
+
+if (app()->environment('local', 'testing') && config('lab3.enabled')) {
+    Route::get('/lab3/client', Lab3ClientInfoController::class);
+    Route::get('/lab3/limited', Lab3ClientInfoController::class)
+        ->middleware('throttle:3,1');
+}

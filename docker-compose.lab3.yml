@@ -1,0 +1,7 @@
+services:
+  app1:
+    environment:
+      LAB3_PROXY_LAB: "true"
+  app2:
+    environment:
+      LAB3_PROXY_LAB: "true"

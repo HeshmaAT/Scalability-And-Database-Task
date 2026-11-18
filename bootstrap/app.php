@@ -23,7 +23,13 @@ return Application::configure(basePath: dirname(__DIR__))
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Only the fixed nginx address in our controlled proxy lab is trusted.
+        // Never trust all callers or an entire Docker subnet by default.
+        $middleware->trustProxies(
+            at: ['172.30.53.10'],
+            headers: \Illuminate\Http\Request::HEADER_X_FORWARDED_FOR
+                | \Illuminate\Http\Request::HEADER_X_FORWARDED_PROTO,
+        );
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (\PDOException $exception) {
