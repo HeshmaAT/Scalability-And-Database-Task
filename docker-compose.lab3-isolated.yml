@@ -1,0 +1,24 @@
+services:
+  app1:
+    environment:
+      LARAVEL_HTTP_PROXY: http://squid:3128
+  app2:
+    environment:
+      LARAVEL_HTTP_PROXY: http://squid:3128
+  worker:
+    environment:
+      LARAVEL_HTTP_PROXY: http://squid:3128
+  scheduler:
+    environment:
+      LARAVEL_HTTP_PROXY: http://squid:3128
+  squid:
+    networks:
+      default:
+        aliases:
+          - private-destination.test
+      lab3-egress: {}
+
+networks:
+  default:
+    internal: true
+  lab3-egress: {}

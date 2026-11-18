@@ -1,0 +1,5 @@
+services:
+  nginx:
+    volumes:
+      - ./docker/nginx/lab3-microcache.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./docker/nginx/lab3-fastcgi-fixed.params:/etc/nginx/lab3-fastcgi-fixed.params:ro

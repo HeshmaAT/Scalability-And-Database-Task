@@ -27,6 +27,22 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        $egressProxy = config('egress.proxy');
+
+        if (is_string($egressProxy) && $egressProxy !== '') {
+            \Illuminate\Support\Facades\Http::globalOptions([
+                'proxy' => ['http' => $egressProxy, 'https' => $egressProxy, 'no' => []],
+                'connect_timeout' => 3,
+                'timeout' => 5,
+                'allow_redirects' => [
+                    'max' => 3,
+                    'protocols' => ['http', 'https'],
+                    'strict' => true,
+                    'referer' => false,
+                ],
+            ]);
+        }
+
         RateLimiter::for('create-links', function (Request $request) {
             return Limit::perMinute(config('links.create_per_minute'))
                 ->by('create-links:user:' . $request->user()->getAuthIdentifier());

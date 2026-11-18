@@ -1,0 +1,10 @@
+services:
+  squid:
+    build: ./docker/lab3/squid
+    volumes:
+      - ./docker/lab3/squid/squid.conf:/etc/squid/squid.conf:ro
+    networks:
+      default:
+        aliases:
+          - private-destination.test
+    restart: unless-stopped
