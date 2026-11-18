@@ -1,0 +1,27 @@
+services:
+  toxiproxy:
+    image: ghcr.io/shopify/toxiproxy:2.12.0
+    command: ["-host", "0.0.0.0", "-config", "/config/toxiproxy.json"]
+    volumes:
+      - ./docker/lab4/toxiproxy.json:/config/toxiproxy.json:ro
+    networks:
+      - default
+
+  lab4-tools:
+    build: ./docker/lab2/client
+    command: ["sleep", "infinity"]
+    networks:
+      - default
+
+  app1:
+    environment:
+      AWS_ENDPOINT: http://toxiproxy:19000
+  app2:
+    environment:
+      AWS_ENDPOINT: http://toxiproxy:19000
+  worker:
+    environment:
+      AWS_ENDPOINT: http://toxiproxy:19000
+  scheduler:
+    environment:
+      AWS_ENDPOINT: http://toxiproxy:19000

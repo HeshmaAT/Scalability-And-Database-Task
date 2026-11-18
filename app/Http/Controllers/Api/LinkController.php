@@ -8,13 +8,17 @@ use App\Http\Requests\Api\UpdateLinkRequest;
 use App\Services\CreateLinkService;
 use App\Services\LinkDetailsService;
 use App\Services\UpdateLinkService;
+use App\Services\QrDeliveryUrlService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\URL;
 
 class LinkController extends Controller
 {
+    public function __construct(private QrDeliveryUrlService $qrUrls)
+    {
+    }
+
     public function store(StoreLinkRequest $request, CreateLinkService $service): JsonResponse
     {
         $data = $request->validated();
@@ -75,7 +79,7 @@ class LinkController extends Controller
             'status' => $qr->status,
             'generated_at' => $qr->generated_at,
             'url' => $qr->status === 'ready'
-                ? URL::temporarySignedRoute('qr.image', now()->addMinutes(5), ['linkId' => $qr->link_id],)
+                ? $this->qrUrls->forLink($qr->link_id)
                 : null,
         ], $qr->status === 'pending' ? 202 : 200);
     }

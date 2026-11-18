@@ -31,3 +31,8 @@ if (app()->environment('local', 'testing') && config('lab3.enabled')) {
     Route::get('/lab3/limited', Lab3ClientInfoController::class)
         ->middleware('throttle:3,1');
 }
+
+
+if (app()->environment('local', 'testing') && config('lab4.enabled')) {
+    Route::get('/lab4/qr-authorize', \App\Http\Controllers\Lab\Lab4QrAuthorizeController::class);
+}

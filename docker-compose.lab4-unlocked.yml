@@ -1,0 +1,4 @@
+services:
+  edge-asia:
+    volumes:
+      - ./docker/lab4/edge/edge-unlocked.conf:/etc/nginx/conf.d/default.conf:ro

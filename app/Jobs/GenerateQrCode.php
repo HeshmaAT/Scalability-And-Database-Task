@@ -53,7 +53,7 @@ class GenerateQrCode implements ShouldQueue
                         ->setMargin(10);
 
                     $image = (new SvgWriter())->write($qrCode);
-                    $objectKey = 'qr/' . $link->id . '.svg';
+                    $objectKey = 'qr/'.$link->id.'/'.\Illuminate\Support\Str::uuid().'.svg';
 
                     Storage::disk('s3')->put(
                         $objectKey,
