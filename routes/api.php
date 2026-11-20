@@ -36,3 +36,6 @@ if (app()->environment('local', 'testing') && config('lab3.enabled')) {
 if (app()->environment('local', 'testing') && config('lab4.enabled')) {
     Route::get('/lab4/qr-authorize', \App\Http\Controllers\Lab\Lab4QrAuthorizeController::class);
 }
+
+Route::put('/links/{id}/webhook', [\App\Http\Controllers\Api\LinkWebhookController::class,'store'])->whereNumber('id')->middleware('auth:sanctum');
+Route::delete('/links/{id}/webhook', [\App\Http\Controllers\Api\LinkWebhookController::class,'destroy'])->whereNumber('id')->middleware('auth:sanctum');

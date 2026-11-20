@@ -1,0 +1,28 @@
+services:
+  milestone-consumer:
+    extends:
+      file: docker-compose.yml
+      service: app1
+    volumes: &milestone-code
+      - ./app:/var/www/html/app:ro
+      - ./config/events.php:/var/www/html/config/events.php:ro
+      - ./database/migrations:/var/www/html/database/migrations:ro
+    command: [php, artisan, 'events:consume', milestones, '--consumer=milestones-1']
+    restart: unless-stopped
+    depends_on:
+      redis-streams:
+        condition: service_healthy
+      db-primary:
+        condition: service_healthy
+  event-outbox-relay:
+    extends:
+      file: docker-compose.yml
+      service: app1
+    volumes: *milestone-code
+    command: [php, artisan, 'events:relay']
+    restart: unless-stopped
+    depends_on:
+      redis-streams:
+        condition: service_healthy
+      db-primary:
+        condition: service_healthy

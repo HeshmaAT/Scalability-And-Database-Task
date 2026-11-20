@@ -12,6 +12,11 @@ class ClickBufferService
 
     public function record(int $linkId, string $ip): void
     {
+        if (config('events.enabled')) {
+            app(\App\Services\Events\EventStream::class)->recordClick($linkId, $ip);
+            return;
+        }
+
         $event = json_encode([
             'link_id' => $linkId,
             'clicked_at' => now('UTC')->format('Y-m-d H:i:s'),

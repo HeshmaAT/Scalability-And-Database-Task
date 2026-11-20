@@ -1,0 +1,7 @@
+services:
+  app1:
+    environment:
+      CLICK_STREAM_ENABLED: 'true'
+  app2:
+    environment:
+      CLICK_STREAM_ENABLED: 'true'

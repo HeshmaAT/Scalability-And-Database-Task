@@ -1,0 +1,13 @@
+services:
+  lab5-webhook-proxy:
+    build: ./docker/lab3/squid
+    volumes:
+      - ./docker/lab5/webhook-test-squid.conf:/etc/squid/squid.conf:ro
+  lab5-webhook-receiver:
+    build: ./docker/dns-lab/client
+    command: [python3, -u, /receiver.py]
+    volumes:
+      - ./docker/lab5/webhook-receiver.py:/receiver.py:ro
+      - ./work/lab5-webhook-secret:/run/webhook-secret:ro
+    tmpfs:
+      - /data

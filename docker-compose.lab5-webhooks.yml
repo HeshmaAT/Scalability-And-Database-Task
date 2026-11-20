@@ -1,0 +1,28 @@
+services:
+  app1:
+    volumes:
+      - ./routes/api.php:/var/www/html/routes/api.php:ro
+      - ./config/webhooks.php:/var/www/html/config/webhooks.php:ro
+  app2:
+    volumes:
+      - ./routes/api.php:/var/www/html/routes/api.php:ro
+      - ./config/webhooks.php:/var/www/html/config/webhooks.php:ro
+  webhook-consumer:
+    extends:
+      file: docker-compose.yml
+      service: app1
+    volumes: &webhook-code
+      - ./app:/var/www/html/app:ro
+      - ./config/events.php:/var/www/html/config/events.php:ro
+      - ./config/webhooks.php:/var/www/html/config/webhooks.php:ro
+    command: [php, artisan, 'events:webhooks']
+    restart: unless-stopped
+  webhook-delivery:
+    extends:
+      file: docker-compose.yml
+      service: app1
+    environment:
+      LARAVEL_HTTP_PROXY: http://squid:3128
+    volumes: *webhook-code
+    command: [php, artisan, 'webhooks:deliver']
+    restart: unless-stopped

@@ -1,0 +1,11 @@
+services:
+  lab5-replay-redis:
+    image: redis:7.4
+    command: [redis-server, --appendonly, 'yes', --appendfsync, everysec, --maxmemory, 768mb, --maxmemory-policy, noeviction]
+    mem_limit: 1g
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 2s
+      timeout: 2s
+      retries: 15
+    # Ephemeral anonymous volume: the runner removes this test service and its volume.

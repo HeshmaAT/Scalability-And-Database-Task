@@ -1,0 +1,33 @@
+services:
+  app1:
+    volumes: &lab5-code
+      - ./app:/var/www/html/app:ro
+      - ./config/events.php:/var/www/html/config/events.php:ro
+      - ./database/migrations:/var/www/html/database/migrations:ro
+      - ./tests:/var/www/html/tests:ro
+  app2:
+    volumes: *lab5-code
+  analytics-1:
+    extends:
+      file: docker-compose.yml
+      service: app1
+    volumes: *lab5-code
+    command: [php, artisan, 'events:consume', analytics-writer, '--consumer=analytics-1']
+    restart: unless-stopped
+    depends_on:
+      redis-streams:
+        condition: service_healthy
+      db-primary:
+        condition: service_healthy
+  analytics-2:
+    extends:
+      file: docker-compose.yml
+      service: app1
+    volumes: *lab5-code
+    command: [php, artisan, 'events:consume', analytics-writer, '--consumer=analytics-2']
+    restart: unless-stopped
+    depends_on:
+      redis-streams:
+        condition: service_healthy
+      db-primary:
+        condition: service_healthy

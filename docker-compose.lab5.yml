@@ -1,0 +1,21 @@
+services:
+  redis-streams:
+    image: redis:7.4
+    command: [redis-server, --appendonly, 'yes', --appendfsync, everysec, --maxmemory, 384mb, --maxmemory-policy, noeviction]
+    volumes:
+      - lab5-streams:/data
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 3s
+      timeout: 2s
+      retries: 10
+  app1:
+    environment:
+      STREAM_REDIS_HOST: redis-streams
+      CLICK_STREAM_ENABLED: 'false'
+  app2:
+    environment:
+      STREAM_REDIS_HOST: redis-streams
+      CLICK_STREAM_ENABLED: 'false'
+volumes:
+  lab5-streams:
