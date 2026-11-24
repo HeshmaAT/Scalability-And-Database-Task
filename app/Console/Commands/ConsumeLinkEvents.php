@@ -21,6 +21,7 @@ class ConsumeLinkEvents extends Command
         if (!preg_match('/^[a-zA-Z0-9_-]{1,80}$/',$name)) throw new RuntimeException('Invalid consumer name');
         $count=max(1,min(500,(int)$this->option('count')));
         $redis=$stream->client(); $redis->setOption(\Redis::OPT_READ_TIMEOUT,2.0);
+        $lastMaintenanceWarningAt = 0.0;
         try {
             do {
                 try {
@@ -62,8 +63,16 @@ class ConsumeLinkEvents extends Command
                     $inserted=$handler->persist($events,$name);
                     if ($acks && !$this->option('skip-ack')) $redis->rawCommand('XACK',$key,$group,...$acks);
                     if ($acks) $this->line(json_encode(['consumer'=>$name,'delivered'=>count($acks),'inserted'=>$inserted,'acked'=>!$this->option('skip-ack')]));
+                } catch (\App\Exceptions\AnalyticsMaintenanceBusy $e) {
+                    if ($this->option('once')) { $this->warn($e->getMessage()); return 1; }
+                    if (microtime(true) - $lastMaintenanceWarningAt >= 5) {
+                        $this->warn($e->getMessage());
+                        $lastMaintenanceWarningAt = microtime(true);
+                    }
+                    // The database already waited up to one second; retry briefly if still busy.
+                    usleep(100000);
                 } catch (\Throwable $e) {
-                    $this->error(get_class($e).': '.$e->getMessage());
+                    $this->error(get_class($e).': '.$e->getMessage().' @ '.$e->getFile().':'.$e->getLine());
                     if ($this->option('once')) return 1;
                     sleep(1);
                 }

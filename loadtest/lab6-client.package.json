@@ -1,0 +1,9 @@
+{
+  "private": true,
+  "dependencies": {
+    "laravel-echo": "^2.0.0",
+    "pusher-js": "^8.4.0",
+    "esbuild": "^0.25.0",
+    "ws": "^8.18.0"
+  }
+}

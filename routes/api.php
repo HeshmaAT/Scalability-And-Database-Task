@@ -39,3 +39,19 @@ if (app()->environment('local', 'testing') && config('lab4.enabled')) {
 
 Route::put('/links/{id}/webhook', [\App\Http\Controllers\Api\LinkWebhookController::class,'store'])->whereNumber('id')->middleware('auth:sanctum');
 Route::delete('/links/{id}/webhook', [\App\Http\Controllers\Api\LinkWebhookController::class,'destroy'])->whereNumber('id')->middleware('auth:sanctum');
+
+if (config('lab6.enabled') && app()->environment('local', 'testing')) {
+    Route::middleware('auth:sanctum')->prefix('lab6')->group(function () {
+        Route::get('/links', [\App\Http\Controllers\Api\LinkDashboardController::class, 'links']);
+        Route::get('/links/{id}/snapshot', [\App\Http\Controllers\Api\LinkDashboardController::class, 'snapshot'])->whereNumber('id');
+        Route::get('/links/{id}/poll', [\App\Http\Controllers\Api\LinkDashboardController::class, 'poll'])->whereNumber('id');
+    });
+}
+
+if (config('lab6.enabled') && app()->environment('local', 'testing')) {
+    Route::middleware('auth:sanctum')->prefix('lab6')->group(function () {
+        Route::get('/realtime/config', [\App\Http\Controllers\Api\Lab6RealtimeController::class, 'config']);
+        Route::post('/broadcasting/auth', [\App\Http\Controllers\Api\Lab6RealtimeController::class, 'authorizeChannel']);
+        Route::get('/links/{id}/events', [\App\Http\Controllers\Api\Lab6RealtimeController::class, 'events'])->whereNumber('id');
+    });
+}

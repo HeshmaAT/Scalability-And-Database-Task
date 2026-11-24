@@ -11,3 +11,7 @@ Route::get('/instance', function () {
         'hostname' => gethostname(),
     ]);
 });
+
+if (config('lab6.enabled') && app()->environment('local', 'testing')) {
+    Route::get('/lab6', fn () => view('lab6.dashboard'));
+}

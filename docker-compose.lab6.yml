@@ -1,0 +1,15 @@
+services:
+  nginx:
+    volumes:
+      - ./docker/nginx/lab6.conf:/etc/nginx/conf.d/default.conf:ro
+  app1:
+    environment:
+      LAB6_DASHBOARD_ENABLED: 'true'
+    volumes: &lab6-view
+      - ./config/lab6.php:/var/www/html/config/lab6.php:ro
+      - ./routes/web.php:/var/www/html/routes/web.php:ro
+      - ./resources/views/lab6:/var/www/html/resources/views/lab6:ro
+  app2:
+    environment:
+      LAB6_DASHBOARD_ENABLED: 'true'
+    volumes: *lab6-view

@@ -27,6 +27,9 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        \Laravel\Sanctum\Sanctum::usePersonalAccessTokenModel(\App\Models\PersonalAccessToken::class);
+        if (config('lab6.enabled')) { require base_path('routes/channels.php'); }
+
         $egressProxy = config('egress.proxy');
 
         if (is_string($egressProxy) && $egressProxy !== '') {

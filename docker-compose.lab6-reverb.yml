@@ -1,0 +1,67 @@
+services:
+  redis-reverb:
+    image: redis:7.4
+    command: [redis-server, --maxmemory, 128mb, --maxmemory-policy, noeviction]
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 2s
+      timeout: 2s
+      retries: 15
+  app1:
+    environment: &lab6-realtime-env
+      LAB6_DASHBOARD_ENABLED: 'true'
+      BROADCAST_CONNECTION: reverb
+      REVERB_HOST: reverb-1
+    volumes: &lab6-realtime-config
+      - ./config/broadcasting.php:/var/www/html/config/broadcasting.php:ro
+      - ./config/reverb.php:/var/www/html/config/reverb.php:ro
+      - ./routes/channels.php:/var/www/html/routes/channels.php:ro
+  app2:
+    environment: *lab6-realtime-env
+    volumes: *lab6-realtime-config
+  reverb-1:
+    extends:
+      file: docker-compose.yml
+      service: app1
+    command: [php, artisan, 'reverb:start', '--host=0.0.0.0', '--port=8080']
+    environment: *lab6-realtime-env
+    volumes: &lab6-realtime-code
+      - ./app:/var/www/html/app:ro
+      - ./config/events.php:/var/www/html/config/events.php:ro
+      - ./config/lab6.php:/var/www/html/config/lab6.php:ro
+      - ./config/broadcasting.php:/var/www/html/config/broadcasting.php:ro
+      - ./config/reverb.php:/var/www/html/config/reverb.php:ro
+      - ./routes/channels.php:/var/www/html/routes/channels.php:ro
+    depends_on:
+      redis-reverb:
+        condition: service_healthy
+    restart: unless-stopped
+    ulimits:
+      nofile:
+        soft: 10000
+        hard: 10000
+  reverb-2:
+    extends:
+      service: reverb-1
+    command: [php, artisan, 'reverb:start', '--host=0.0.0.0', '--port=8080']
+  dashboard-consumer:
+    extends:
+      file: docker-compose.yml
+      service: app1
+    command: [php, artisan, 'events:dashboard']
+    environment: *lab6-realtime-env
+    volumes: *lab6-realtime-code
+    depends_on:
+      redis-streams:
+        condition: service_healthy
+      reverb-1:
+        condition: service_started
+    restart: unless-stopped
+  nginx:
+    volumes:
+      - ./docker/nginx/lab6-reverb.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      reverb-1:
+        condition: service_started
+      reverb-2:
+        condition: service_started

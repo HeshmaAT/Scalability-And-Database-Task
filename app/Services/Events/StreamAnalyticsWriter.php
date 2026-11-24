@@ -10,6 +10,7 @@ class StreamAnalyticsWriter
     public function persist(array $events, string $consumer): int
     {
         if (!$events) return 0;
+        $traceStarted = microtime(true);
         $inserted = 0;
         $acquired = app(ClickMaintenanceService::class)->run(function () use ($events, $consumer, &$inserted) {
             $inserted = DB::transaction(function () use ($events, $consumer) {
@@ -53,8 +54,10 @@ class StreamAnalyticsWriter
                 ]);
                 return $total;
             },5);
-        });
-        if (!$acquired) throw new RuntimeException('Analytics maintenance is busy; leave events pending');
+        }, lockWaitSeconds: 1);
+        if (!$acquired) throw new \App\Exceptions\AnalyticsMaintenanceBusy('Analytics maintenance is busy; leave events pending');
+        $traceMs = (microtime(true) - $traceStarted) * 1000;
+        if ($traceMs >= 100) file_put_contents('php://stderr', json_encode(['lab6_trace'=>'analytics_persist_slow','at'=>gmdate('c'),'elapsed_ms'=>round($traceMs,3),'batch_size'=>count($events),'inserted'=>$inserted]).PHP_EOL);
         return $inserted;
     }
 }
