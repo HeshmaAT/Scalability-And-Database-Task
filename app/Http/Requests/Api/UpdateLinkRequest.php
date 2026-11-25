@@ -14,6 +14,7 @@ class UpdateLinkRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'expected_version' => ['sometimes', 'required', 'integer', 'min:0'],
             'is_active' => ['sometimes', 'required', 'boolean'],
             'expires_at' => ['sometimes', 'nullable', 'date', 'after:now'],
         ];

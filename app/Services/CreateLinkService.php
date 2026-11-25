@@ -39,7 +39,10 @@ class CreateLinkService
             $link->expires_at = $expiry;
 
             try {
-                $link->save();
+                \Illuminate\Support\Facades\DB::transaction(function() use ($link): void {
+                    $link->save();
+                    app(\App\Services\Events\LinkLifecycle::class)->created($link);
+                });
             } catch (UniqueConstraintViolationException $exception) {
                 if ($customAlias !== null) {
                     throw new ConflictHttpException(
@@ -51,7 +54,9 @@ class CreateLinkService
                 continue;
             }
 
-            $this->cache->refresh($link->short_code);
+            \Illuminate\Support\Facades\DB::afterCommit(function() use ($link): void {
+                $this->cache->refresh($link->short_code);
+            });
 
             return $link;
         }

@@ -40,6 +40,7 @@ class ConsumeDashboardEvents extends Command{
             }
             if($entries)$this->line(json_encode(['dashboard_entries'=>count($entries)]));
         }catch(\LogicException $e){if($this->option('once'))return 1;usleep(50000);}
+        catch(\RedisException $e){$this->error('Stream connection lost; supervised reconnect required');return self::FAILURE;}
         catch(\Throwable $e){$this->error(get_class($e).': '.$e->getMessage().' @ '.$e->getFile().':'.$e->getLine());if($this->option('once'))return 1;sleep(1);}
         }while(!$this->option('once'));}finally{$redis->close();}return 0;
     }

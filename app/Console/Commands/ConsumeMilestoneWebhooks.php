@@ -33,7 +33,7 @@ class ConsumeMilestoneWebhooks extends Command
                 $redis->rawCommand('XACK',$key,'webhooks',$entryId);
             }
             if($entries)$this->line(json_encode(['webhook_events_seen'=>count($entries)]));
-        }catch(\Throwable $e){$this->error(get_class($e).': '.$e->getMessage());if($this->option('once'))return 1;sleep(1);}}while(!$this->option('once'));}
+        }catch(\RedisException $e){$this->error('Stream connection lost; supervised reconnect required');return self::FAILURE;}catch(\Throwable $e){$this->error(get_class($e).': '.$e->getMessage());if($this->option('once'))return 1;sleep(1);}}while(!$this->option('once'));}
         finally{$redis->close();}return 0;
     }
 }

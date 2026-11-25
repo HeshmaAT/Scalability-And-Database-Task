@@ -32,6 +32,7 @@ class LinkController extends Controller
 
         return response()->json([
             'id' => $link->id,
+            'version' => (int) $link->lifecycle_version,
             'short_code' => $link->short_code,
             'short_url' => url('/' . $link->short_code),
             'destination_url' => $link->destination_url,
@@ -48,6 +49,7 @@ class LinkController extends Controller
 
         return response()->json([
             'id' => $link->id,
+            'version' => (int) $link->lifecycle_version,
             'short_code' => $link->short_code,
             'is_active' => (bool) $link->is_active,
             'expires_at' => $link->expires_at === null

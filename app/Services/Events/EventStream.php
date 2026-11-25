@@ -38,10 +38,12 @@ class EventStream
     public function recordClick(int $linkId, string $ip): ?string
     {
         try {
-            return $this->append('LinkClicked', $linkId, [
+            $confirmed = $this->append('LinkClicked', $linkId, [
                 'clicked_at' => now('UTC')->format('Y-m-d H:i:s'),
                 'visitor_hash' => hash_hmac('sha256', 'click-visitor:'.$ip, config('app.key')),
             ]);
+            if (app()->environment('local','testing') && app()->bound('request')) request()->attributes->set('lab7_click_confirmed', true);
+            return $confirmed;
         } catch (\Throwable $exception) {
             // Do not log the visitor address, payload, token, or exception credentials.
             try { Log::warning('click_stream_publish_failed', ['link_id' => $linkId, 'exception_type' => get_class($exception)]); }
